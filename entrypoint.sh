@@ -12,6 +12,9 @@ git config --global --add safe.directory /github/workspace
 git config --global user.name "github-actions[bot]"
 git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
+# Configure git to use the token
+git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+
 # Create or switch to the target branch
 git checkout -b "$BRANCH" || git checkout "$BRANCH"
 

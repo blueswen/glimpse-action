@@ -14,6 +14,9 @@ inputs:
     description: 'Number of generations to keep'
     required: false
     default: '5'
+  token:
+    description: 'GitHub token for authentication'
+    required: true
 outputs:
   file_urls:
     description: 'Comma-separated list of uploaded file URLs'
@@ -25,4 +28,4 @@ runs:
     - ${{ inputs.branch }}
     - ${{ inputs.generations }}
   env:
-    GITHUB_TOKEN: ${{ github.token }} 
+    GITHUB_TOKEN: ${{ inputs.token }} 

@@ -55,6 +55,7 @@ jobs:
           directory: 'screenshots'
           branch: 'glimpse'
           generations: '5'
+          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Create summary
         run: |
