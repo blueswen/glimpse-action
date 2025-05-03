@@ -2,6 +2,8 @@
 
 A GitHub Action that uploads files to a specific branch and returns their URLs for preview purposes, with versioning support.
 
+The image preview feature only works in public repositories.
+
 ## Usage
 
 ```yaml
@@ -16,7 +18,7 @@ jobs:
       
       - name: Upload files
         id: upload
-        uses: your-username/glimpse-action@v1
+        uses: blueswen/glimpse-action@v1
         with:
           directory: 'path/to/files'
           branch: 'glimpse'  # Optional, defaults to 'glimpse'
@@ -24,6 +26,14 @@ jobs:
           
       - name: Display file URLs
         run: echo "File URLs: ${{ steps.upload.outputs.file_urls }}"
+
+      - name: Preview image in summary
+        run: |
+          echo "## Screenshot URLs" >> $GITHUB_STEP_SUMMARY
+          for file_url in $(echo "${{ steps.upload.outputs.file_urls }}" | tr ',' '\n'); do
+            filename=$(basename "$file_url")
+            echo "![${filename}](${file_url})" >> $GITHUB_STEP_SUMMARY
+          done
 ```
 
 ## Inputs
@@ -43,8 +53,6 @@ jobs:
 - Maintains versioning by keeping only the specified number of generations
 - Automatically removes old generations when the limit is exceeded
 - Returns direct URLs to the uploaded files
-- Simple Docker-based implementation
-- Easy to extend for future features like image diff
 
 ## File Structure
 
@@ -53,11 +61,20 @@ Files are organized in the following structure:
 glimpse/
 └── runs/
     ├── 1/
-    │   └── [your files]
+    │   └── [your directory]
+    |       └── [your image] 
     ├── 2/
-    │   └── [your files]
-    └── 3/
-        └── [your files]
+    │   └── [your directory]
+    |       └── [your image] 
+    ├── 3/
+    │   └── [your directory]
+    |       └── [your image] 
+    ├── 4/
+    │   └── [your directory]
+    |       └── [your image] 
+    └── 5/
+        └── [your directory]
+            └── [your image] 
 ```
 
 ## License

@@ -65,10 +65,14 @@ jobs:
           branch: 'glimpse'
           generations: '5'
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Print file URLs
+        run: |
+          echo "File URLs: ${{ steps.upload.outputs.file_urls }}"
           
       - name: Create summary
         run: |
-          echo "## Screenshot URLs" >> $GITHUB_STEP_SUMMARY
+          echo "## Screenshot" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### GitHub Profile" >> $GITHUB_STEP_SUMMARY
           echo "![GitHub Profile]($(echo ${{ steps.upload.outputs.file_urls }} | cut -d',' -f1))" >> $GITHUB_STEP_SUMMARY
