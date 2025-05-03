@@ -1,0 +1,67 @@
+name: Test Glimpse Action
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install @playwright/test
+          npx playwright install chromium
+          
+      - name: Create test script
+        run: |
+          cat > test.js << 'EOL'
+          const { chromium } = require('@playwright/test');
+          
+          (async () => {
+            const browser = await chromium.launch();
+            const page = await browser.newPage();
+            
+            // Capture GitHub profile
+            await page.goto('https://github.com/blueswen');
+            await page.screenshot({ path: 'screenshots/github.png', fullPage: true });
+            
+            // Capture personal website
+            await page.goto('https://blueswen.github.io/');
+            await page.screenshot({ path: 'screenshots/website.png', fullPage: true });
+            
+            await browser.close();
+          })();
+          EOL
+          
+      - name: Run test script
+        run: |
+          mkdir -p screenshots
+          node test.js
+          
+      - name: Upload screenshots using local glimpse-action
+        uses: ./
+        id: upload
+        with:
+          directory: 'screenshots'
+          branch: 'glimpse'
+          generations: '5'
+          
+      - name: Create summary
+        run: |
+          echo "## Screenshot URLs" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### GitHub Profile" >> $GITHUB_STEP_SUMMARY
+          echo "![GitHub Profile]($(echo ${{ steps.upload.outputs.file_urls }} | cut -d',' -f1))" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Personal Website" >> $GITHUB_STEP_SUMMARY
+          echo "![Personal Website]($(echo ${{ steps.upload.outputs.file_urls }} | cut -d',' -f2))" >> $GITHUB_STEP_SUMMARY 
