@@ -15,18 +15,21 @@ git config --global user.email "github-actions[bot]@users.noreply.github.com"
 # Configure git to use the token
 git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 
-# Create or switch to the target branch
-git checkout -b "$BRANCH" || git checkout "$BRANCH"
-
-# Get the current action run number
-RUN_NUMBER=$GITHUB_RUN_NUMBER
+# Check if branch exists
+if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
+    # Branch exists, switch to it
+    git checkout "$BRANCH"
+else
+    # Branch doesn't exist, create a new orphan branch
+    git checkout --orphan "$BRANCH"
+    # Remove all files from the index
+    git rm -rf .
+fi
 
 # Create directory for this run
-RUN_DIR="runs/$RUN_NUMBER"
+RUN_NUMBER=$GITHUB_RUN_NUMBER
+RUN_DIR="runs/$RUN_NUMBER/$DIRECTORY"
 mkdir -p "$RUN_DIR"
-
-# Remove any existing files in the run directory to avoid conflicts
-rm -rf "$RUN_DIR"/*
 
 # Copy files from the specified directory to the run directory
 cp -r "$DIRECTORY"/* "$RUN_DIR/"
@@ -63,16 +66,11 @@ fi
 # Push to the target branch
 git push origin "$BRANCH" --force
 
-# Get the repository URL
-REPO_URL=$(git config --get remote.origin.url)
-REPO_URL=${REPO_URL/git@github.com:/https://github.com/}
-REPO_URL=${REPO_URL%.git}
-
-# Generate file URLs for the current run
+# Generate file URLs for the current run using raw.githubusercontent.com
 FILE_URLS=""
 for file in $(find "$RUN_DIR" -type f -not -path "./.git/*"); do
     file=${file#./}
-    file_url="$REPO_URL/blob/$BRANCH/$file"
+    file_url="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${BRANCH}/$file"
     FILE_URLS="$FILE_URLS,$file_url"
 done
 FILE_URLS=${FILE_URLS#,}

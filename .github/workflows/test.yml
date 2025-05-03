@@ -40,10 +40,12 @@ jobs:
             
             // Capture GitHub profile
             await page.goto('https://github.com/blueswen');
+            await new Promise(resolve => setTimeout(resolve, 1000));
             await page.screenshot({ path: 'screenshots/github.png', fullPage: true });
             
             // Capture personal website
             await page.goto('https://blueswen.github.io/');
+            await new Promise(resolve => setTimeout(resolve, 1000));
             await page.screenshot({ path: 'screenshots/website.png', fullPage: true });
             
             await browser.close();
