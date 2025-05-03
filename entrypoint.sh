@@ -25,11 +25,14 @@ RUN_NUMBER=$GITHUB_RUN_NUMBER
 RUN_DIR="runs/$RUN_NUMBER"
 mkdir -p "$RUN_DIR"
 
+# Remove any existing files in the run directory to avoid conflicts
+rm -rf "$RUN_DIR"/*
+
 # Copy files from the specified directory to the run directory
 cp -r "$DIRECTORY"/* "$RUN_DIR/"
 
-# Add all files
-git add .
+# Stage only the runs directory
+git add runs/
 
 # Commit changes
 git commit -m "Upload files from GitHub Action run $RUN_NUMBER"
