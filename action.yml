@@ -19,4 +19,10 @@ outputs:
     description: 'Comma-separated list of uploaded file URLs'
 runs:
   using: 'docker'
-  image: 'Dockerfile' 
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.directory }}
+    - ${{ inputs.branch }}
+    - ${{ inputs.generations }}
+  env:
+    GITHUB_TOKEN: ${{ github.token }} 
