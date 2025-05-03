@@ -5,11 +5,18 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# Add permissions block
+permissions:
+  contents: write  # Required for pushing to branches
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          # Required to allow pushing to branches
+          fetch-depth: 0
       
       - name: Setup Node.js
         uses: actions/setup-node@v3
