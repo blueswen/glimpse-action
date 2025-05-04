@@ -25,8 +25,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update v1 tag to point to this release
+      - name: Update floating major tag
         run: |
           git fetch --tags
-          git tag -f v1 ${{ github.ref_name }}
-          git push -f origin v1
+          VERSION="${{ github.ref_name }}"  # → v1.2.3
+          MAJOR_TAG=$(echo "$VERSION" | grep -oE '^v[0-9]+')
+          echo "Updating floating tag: $MAJOR_TAG → $VERSION"
+          git tag -f "$MAJOR_TAG" "$VERSION"
+          git push origin "$MAJOR_TAG" --force
