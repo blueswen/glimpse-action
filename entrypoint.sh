@@ -15,15 +15,21 @@ git config --global user.email "github-actions[bot]@users.noreply.github.com"
 # Configure git to use the token
 git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 
-# Check if branch exists
-if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
-    # Branch exists, switch to it
+# Check if branch exists on remote
+if git ls-remote --exit-code --heads origin "$BRANCH" > /dev/null; then
+    # Branch exists remotely, fetch and checkout
+    git fetch origin "$BRANCH"
     git checkout "$BRANCH"
 else
-    # Branch doesn't exist, create a new orphan branch
+    echo "Branch $BRANCH does not exist. Creating empty base branch..."
+
+    # Create a blank commit as the initial base
     git checkout --orphan "$BRANCH"
-    # Remove all files from the index
     git rm -rf .
+    touch .gitkeep
+    git add .gitkeep
+    git commit -m "Initial empty commit for $BRANCH"
+    git push origin "$BRANCH"
 fi
 
 # Create directory for this run
