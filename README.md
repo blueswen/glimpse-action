@@ -42,9 +42,10 @@ jobs:
 
       - name: Preview image in summary
         run: |
-          echo "## Screenshot URLs" >> $GITHUB_STEP_SUMMARY
+          echo "# Image Preview" >> $GITHUB_STEP_SUMMARY
           for file_url in $(echo "${{ steps.upload.outputs.file_urls }}" | tr ',' '\n'); do
             filename=$(basename "$file_url")
+            echo "## ${filename}" >> $GITHUB_STEP_SUMMARY
             echo "![${filename}](${file_url})" >> $GITHUB_STEP_SUMMARY
           done
 ```
