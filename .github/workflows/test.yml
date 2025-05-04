@@ -20,15 +20,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+      
+      - name: Set cache key week
+        run: echo "CACHE_WEEK=$(date +%V)" >> $GITHUB_ENV
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-playwright-browsers-week-${{ env.CACHE_WEEK }}
           restore-keys: |
-            ${{ runner.os }}-playwright-browsers-
+            ${{ runner.os }}-playwright-browsers-week-
 
       - name: Install dependencies
         run: |
