@@ -22,7 +22,8 @@ outputs:
     description: 'Comma-separated list of uploaded file URLs'
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/blueswen/glimpse-action:v1.0.1'
+  image: 'Dockerfile'
+  # image: 'docker://ghcr.io/blueswen/glimpse-action:v1.0.1'
   args:
     - ${{ inputs.directory }}
     - ${{ inputs.branch }}
