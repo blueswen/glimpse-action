@@ -1,36 +1,44 @@
-name: Test Glimpse Action
+name: Glimpse Action Test
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
 
-# Add permissions block
 permissions:
   contents: write  # Required for pushing to branches
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-        with:
-          # Required to allow pushing to branches
-          fetch-depth: 0
-      
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          
-      - name: Install Playwright
+          cache: 'npm'
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-browsers-
+
+      - name: Install dependencies
         run: |
           npm init -y
           npm install @playwright/test
           npx playwright install chromium
-          
-      - name: Create test script
+
+      - name: Create Playwright test script
         run: |
+          mkdir -p screenshots
           cat > test.js << 'EOL'
           const { chromium } = require('@playwright/test');
           
@@ -40,24 +48,22 @@ jobs:
             
             // Capture GitHub profile
             await page.goto('https://github.com/blueswen');
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await page.waitForTimeout(1000);
             await page.screenshot({ path: 'screenshots/github.png', fullPage: true });
-            
+
             // Capture personal website
             await page.goto('https://blueswen.github.io/');
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await page.waitForTimeout(1000);
             await page.screenshot({ path: 'screenshots/website.png', fullPage: true });
-            
+
             await browser.close();
           })();
           EOL
-          
-      - name: Run test script
-        run: |
-          mkdir -p screenshots
-          node test.js
-          
-      - name: Upload screenshots using local glimpse-action
+
+      - name: Run Playwright script
+        run: node test.js
+
+      - name: Upload screenshots using local Glimpse action
         uses: ./
         id: upload
         with:
@@ -66,16 +72,14 @@ jobs:
           generations: '5'
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Print file URLs
+      - name: Display file URLs
         run: |
           echo "File URLs: ${{ steps.upload.outputs.file_urls }}"
-          
-      - name: Create summary
+
+      - name: Preview image in summary
         run: |
-          echo "## Screenshot" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### GitHub Profile" >> $GITHUB_STEP_SUMMARY
-          echo "![GitHub Profile]($(echo ${{ steps.upload.outputs.file_urls }} | cut -d',' -f1))" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Personal Website" >> $GITHUB_STEP_SUMMARY
-          echo "![Personal Website]($(echo ${{ steps.upload.outputs.file_urls }} | cut -d',' -f2))" >> $GITHUB_STEP_SUMMARY 
+          echo "## Screenshot URLs" >> $GITHUB_STEP_SUMMARY
+          for file_url in $(echo "${{ steps.upload.outputs.file_urls }}" | tr ',' '\n'); do
+            filename=$(basename "$file_url")
+            echo "![${filename}](${file_url})" >> $GITHUB_STEP_SUMMARY
+          done
