@@ -35,6 +35,7 @@ jobs:
           directory: 'path/to/files'
           branch: 'glimpse'  # Optional, defaults to 'glimpse'
           generations: '5'   # Optional, defaults to 5
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Display file URLs
         run: |
