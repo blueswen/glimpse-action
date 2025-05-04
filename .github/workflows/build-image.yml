@@ -1,0 +1,44 @@
+name: Build Glimpse Docker Image
+
+on:
+  push:
+    tags:
+      - 'image-v*'  # Trigger only on image-vX.Y.Z tags
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write  # Needed to push to GHCR
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: extract
+        run: |
+          RAW_TAG="${GITHUB_REF#refs/tags/}"        # image-v1.2.3
+          VERSION="${RAW_TAG#image-}"               # v1.2.3
+          echo "IMAGE_TAG=${VERSION}" >> $GITHUB_ENV
+          echo "Image tag will be: $VERSION"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
