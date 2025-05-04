@@ -1,5 +1,11 @@
 # Glimpse Action
 
+<p align="center">
+[![Test Glimpse Action](https://github.com/blueswen/glimpse-action/actions/workflows/test.yml/badge.svg)](https://github.com/blueswen/glimpse-action/actions/workflows/test.yml)
+[![CD](https://github.com/blueswen/glimpse-action/actions/workflows/cd.yml/badge.svg)](https://github.com/blueswen/glimpse-action/actions/workflows/cd.yml)
+[![License](https://img.shields.io/github/license/blueswen/glimpse-action)](LICENSE)
+</p>
+
 A GitHub Action that uploads files to a specific branch and returns their URLs for preview purposes, with versioning support.
 
 The image preview feature only works in public repositories.
@@ -10,11 +16,14 @@ The image preview feature only works in public repositories.
 name: Upload Files
 on: [push]
 
+permissions:
+  contents: write  # Required for pushing to branches
+
 jobs:
   upload:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Upload files
         id: upload
@@ -23,9 +32,10 @@ jobs:
           directory: 'path/to/files'
           branch: 'glimpse'  # Optional, defaults to 'glimpse'
           generations: '5'   # Optional, defaults to 5
-          
+
       - name: Display file URLs
-        run: echo "File URLs: ${{ steps.upload.outputs.file_urls }}"
+        run: |
+          echo "File URLs: ${{ steps.upload.outputs.file_urls }}"
 
       - name: Preview image in summary
         run: |
@@ -79,4 +89,4 @@ glimpse/
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
