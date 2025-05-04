@@ -30,8 +30,12 @@ jobs:
       - name: Update floating major tag
         run: |
           git fetch --tags
+          git config --global push.followTags false
+          git config --global push.default nothing
+
           VERSION="${{ github.ref_name }}"  # → v1.2.3
           MAJOR_TAG=$(echo "$VERSION" | grep -oE '^v[0-9]+')
+
           echo "Updating floating tag: $MAJOR_TAG → $VERSION"
           git tag -f "$MAJOR_TAG" "$VERSION"
           git push origin "refs/tags/$MAJOR_TAG" --force
