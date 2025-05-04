@@ -1,10 +1,11 @@
 # Glimpse Action
 
-<p align="center">
+<div align="center">
+
 [![Test Glimpse Action](https://github.com/blueswen/glimpse-action/actions/workflows/test.yml/badge.svg)](https://github.com/blueswen/glimpse-action/actions/workflows/test.yml)
-[![CD](https://github.com/blueswen/glimpse-action/actions/workflows/cd.yml/badge.svg)](https://github.com/blueswen/glimpse-action/actions/workflows/cd.yml)
 [![License](https://img.shields.io/github/license/blueswen/glimpse-action)](LICENSE)
-</p>
+
+</div>
 
 A GitHub Action that uploads files to a specific branch and returns their URLs for preview purposes, with versioning support.
 
@@ -67,8 +68,9 @@ jobs:
 ## File Structure
 
 Files are organized in the following structure:
+
 ```
-glimpse/
+/
 └── runs/
     ├── 1/
     │   └── [your directory]
