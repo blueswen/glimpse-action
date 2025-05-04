@@ -33,16 +33,5 @@ jobs:
           VERSION="${{ github.ref_name }}"  # → v1.2.3
           MAJOR_TAG=$(echo "$VERSION" | grep -oE '^v[0-9]+')
           echo "Updating floating tag: $MAJOR_TAG → $VERSION"
-          
-          # Check if the tag already exists and points to the correct commit
-          if git rev-parse "$MAJOR_TAG" >/dev/null 2>&1; then
-            CURRENT_COMMIT=$(git rev-parse "$MAJOR_TAG")
-            NEW_COMMIT=$(git rev-parse "$VERSION")
-            if [ "$CURRENT_COMMIT" = "$NEW_COMMIT" ]; then
-              echo "Tag $MAJOR_TAG already points to $VERSION. Skipping update."
-              exit 0
-            fi
-          fi
-          
           git tag -f "$MAJOR_TAG" "$VERSION"
-          git push origin "$MAJOR_TAG" --force
+          git push origin "refs/tags/$MAJOR_TAG" --force
