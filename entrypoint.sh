@@ -76,4 +76,4 @@ done
 FILE_URLS=${FILE_URLS#,}
 
 # Set output
-echo "file_urls=$FILE_URLS" >> $GITHUB_OUTPUT 
+echo "file_urls=$FILE_URLS" >> $GITHUB_OUTPUT
