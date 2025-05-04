@@ -75,21 +75,14 @@ Files are organized in the following structure:
 ```
 /
 └── runs/
-    ├── 1/
-    │   └── [your directory]
-    |       └── [your image] 
-    ├── 2/
-    │   └── [your directory]
-    |       └── [your image] 
-    ├── 3/
-    │   └── [your directory]
-    |       └── [your image] 
-    ├── 4/
-    │   └── [your directory]
-    |       └── [your image] 
-    └── 5/
-        └── [your directory]
-            └── [your image] 
+    ├── [workflow name]/
+    │   └── [run number]/
+    │       └── [your directory]
+    |           └── [your image] 
+    └── [workflow name]/
+        └── [run number]/
+            └── [your directory]
+                └── [your image]
 ```
 
 ## License
