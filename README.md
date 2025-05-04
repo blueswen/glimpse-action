@@ -13,6 +13,8 @@ The image preview feature only works in public repositories.
 
 ## Usage
 
+Example workflow: [Glimpse Action Test](https://github.com/blueswen/glimpse-action/actions/workflows/test.yml)
+
 ```yaml
 name: Upload Files
 on: [push]

@@ -1,4 +1,4 @@
-name: 'Glimpse'
+name: 'Glimpse Action'
 description: 'Upload files to a specific branch and return file URLs'
 author: 'Blueswen'
 inputs:
@@ -29,3 +29,6 @@ runs:
     - ${{ inputs.generations }}
   env:
     GITHUB_TOKEN: ${{ inputs.token }}
+branding:
+  icon: 'eye'
+  color: 'orange'
